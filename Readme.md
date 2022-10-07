@@ -1,1 +1,1 @@
-<img src="./img/my_project.jpg" alt="my project"/>
+<img src="./component/img/my_project.jpg" alt="my project"/>

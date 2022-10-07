@@ -1,31 +1,58 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ImageBackground,
+} from "react-native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import RegistrationScreen from "./component/Screen/RegistrationScreen/RegistrationScreen";
+import { useCallback } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
+    "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  const image = "../../img/PhotoBG.png";
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>My project!</Text>
-      <View style={styles.border}></View>
-      <Button title={"Login"} style={styles.input} />
-      <StatusBar style="auto" />
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
+        <ImageBackground
+          source={{ uri: "./component/img/PhotoBG.png" }}
+          style={styles.image}
+        >
+          <RegistrationScreen />
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "gray",
   },
-  text: {
-    color: "green",
-    fontSize: 50,
-  },
-  border: {
-    borderRadius: 50,
-    backgroundColor: "#000",
+  image: {
+    position: "absolute",
+    zIndex: 22,
+    width: "100%",
+    height: "100%",
   },
 });
