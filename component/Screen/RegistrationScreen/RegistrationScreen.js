@@ -6,9 +6,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
- 
 } from "react-native";
 import { useState } from "react";
 
@@ -61,8 +58,7 @@ function RegistrationScreen() {
     return setShow(true);
   };
 
-  const keyboardVerticalOffset = Platform.OS === "ios" ? 100 : "height";
- 
+  const keyboardVerticalOffset = Platform.OS === "ios" && "padding";
 
   return (
     <View style={styles.container}>
@@ -71,28 +67,28 @@ function RegistrationScreen() {
           <Text style={styles.plus}>+</Text>
         </View>
       </View>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Registration</Text>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
-            <TextInput
-              style={currentLoginStyle}
-              onFocus={() => setFocusLogin(true)}
-              onBlur={() => setFocusLogin(false)}
-              placeholder="Login"
-              value={login}
-              name="login"
-              onChangeText={inputLogin}
-            />
-            <TextInput
-              style={currentEmailStyle}
-              onFocus={() => setFocusEmail(true)}
-              onBlur={() => setFocusEmail(false)}
-              placeholder="You address email"
-              value={email}
-              name="email"
-              onChangeText={inputEmail}
-            />
+      <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Registration</Text>
+          <TextInput
+            style={currentLoginStyle}
+            onFocus={() => setFocusLogin(true)}
+            onBlur={() => setFocusLogin(false)}
+            placeholder="Login"
+            value={login}
+            name="login"
+            onChangeText={inputLogin}
+          />
+          <TextInput
+            style={currentEmailStyle}
+            onFocus={() => setFocusEmail(true)}
+            onBlur={() => setFocusEmail(false)}
+            placeholder="You address email"
+            value={email}
+            name="email"
+            onChangeText={inputEmail}
+          />
+          <View>
             <TextInput
               style={currentPasswordStyle}
               onFocus={() => setFocusPassword(true)}
@@ -106,12 +102,15 @@ function RegistrationScreen() {
             <Text onPress={clickShowPassword} style={styles.showPassword}>
               Show
             </Text>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
-        <TouchableOpacity style={styles.buttonContainer} onPress={handleClick}>
-          <Text style={styles.textButton}>Registration</Text>
-        </TouchableOpacity>
-      </View>
+          </View>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleClick}
+          >
+            <Text style={styles.textButton}>Registration</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
       <Text style={styles.textLink}>Already have an account? Sign in</Text>
       <View style={styles.line}></View>
     </View>

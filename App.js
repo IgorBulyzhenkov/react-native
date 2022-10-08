@@ -9,6 +9,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import RegistrationScreen from "./component/Screen/RegistrationScreen/RegistrationScreen";
 import { useCallback } from "react";
+import LoginScreen from "./component/Screen/LoginScreen/LoginScreen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,16 +29,15 @@ export default function App() {
     return null;
   }
 
-  const image = "../../img/PhotoBG.png";
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
-          source={{ uri: "./component/img/PhotoBG.png" }}
+          source={{ uri: "https://i.postimg.cc/d1MrrJNz/Photo-BG.png" }}
           style={styles.image}
         >
           <RegistrationScreen />
+          <LoginScreen/>
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
@@ -46,13 +46,12 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "gray",
-  },
-  image: {
-    position: "absolute",
-    zIndex: 22,
     width: "100%",
     height: "100%",
+  },
+  image: {
+    justifyContent: "center",
+    flex: 1,
+    resizeMode: "contain",
   },
 });
