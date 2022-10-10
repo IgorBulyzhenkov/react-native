@@ -4,6 +4,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -36,8 +37,8 @@ export default function App() {
           source={{ uri: "https://i.postimg.cc/d1MrrJNz/Photo-BG.png" }}
           style={styles.image}
         >
-          <RegistrationScreen />
-          <LoginScreen/>
+            <RegistrationScreen />
+            {/* <LoginScreen/> */}
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>

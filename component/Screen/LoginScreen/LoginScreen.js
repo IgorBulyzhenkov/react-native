@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useState } from "react";
 
@@ -21,6 +22,14 @@ function LoginScreen() {
     ? styles.focusPassword
     : styles.inputPassword;
 
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width;
+    };
+    const dimensionsHandler = Dimensions.addEventListener("change", onChange);
+    return () => dimensionsHandler.remove();
+  }, []);
+
   const inputEmail = (text) => {
     setEmail(text.trim());
   };
@@ -35,6 +44,10 @@ function LoginScreen() {
   };
 
   const handleClick = () => {
+    Keyboard.dismiss();
+    if (!email && !password) {
+      return;
+    }
     console.log("====================================");
     console.log(`My email ${email}, my password ${password} `);
     console.log("====================================");
@@ -66,7 +79,10 @@ function LoginScreen() {
           />
           <View>
             <TextInput
-              style={currentPasswordStyle}
+              style={{
+                ...currentPasswordStyle,
+                marginBottom: focusEmail ? 60 : 43,
+              }}
               onFocus={() => setFocusPassword(true)}
               onBlur={() => setFocusPassword(false)}
               placeholder="Password"
@@ -75,7 +91,13 @@ function LoginScreen() {
               secureTextEntry={show}
               onChangeText={inputPassword}
             />
-            <Text onPress={clickShowPassword} style={styles.showPassword}>
+            <Text
+              onPress={clickShowPassword}
+              style={{
+                ...styles.showPassword,
+                bottom: focusEmail || focusPassword ? 74 : 58,
+              }}
+            >
               Show
             </Text>
           </View>

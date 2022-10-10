@@ -6,8 +6,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Keyboard,
+  Dimensions,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function RegistrationScreen() {
   const [login, setLogin] = useState("");
@@ -18,11 +20,22 @@ function RegistrationScreen() {
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
 
+
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width;
+    };
+    const dimensionsHandler = Dimensions.addEventListener("change", onChange);
+    return () => dimensionsHandler.remove();
+  }, []);
+
   const currentLoginStyle = focusLogin ? styles.focus : styles.input;
   const currentEmailStyle = focusEmail ? styles.focus : styles.input;
   const currentPasswordStyle = focusPassword
     ? styles.focusPassword
     : styles.inputPassword;
+  const currentFormStyle =
+    focusLogin || focusEmail || focusPassword ? styles.focusForm : null;
 
   const inputLogin = (text) => {
     setLogin(text.trim());
@@ -43,6 +56,10 @@ function RegistrationScreen() {
   };
 
   const handleClick = () => {
+    Keyboard.dismiss();
+    if (!login && !email && !password) {
+      return;
+    }
     console.log("====================================");
     console.log(
       `My login ${login}, my email ${email}, my password ${password} `
@@ -58,7 +75,7 @@ function RegistrationScreen() {
     return setShow(true);
   };
 
-  const keyboardVerticalOffset = Platform.OS === "ios" && "padding";
+  const keyboardVerticalOffset = Platform.OS === "ios" ? "padding" : "height";
 
   return (
     <View style={styles.container}>
@@ -70,38 +87,50 @@ function RegistrationScreen() {
       <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Registration</Text>
-          <TextInput
-            style={currentLoginStyle}
-            onFocus={() => setFocusLogin(true)}
-            onBlur={() => setFocusLogin(false)}
-            placeholder="Login"
-            value={login}
-            name="login"
-            onChangeText={inputLogin}
-          />
-          <TextInput
-            style={currentEmailStyle}
-            onFocus={() => setFocusEmail(true)}
-            onBlur={() => setFocusEmail(false)}
-            placeholder="You address email"
-            value={email}
-            name="email"
-            onChangeText={inputEmail}
-          />
-          <View>
+          <View style={currentFormStyle}>
             <TextInput
-              style={currentPasswordStyle}
-              onFocus={() => setFocusPassword(true)}
-              onBlur={() => setFocusPassword(false)}
-              placeholder="Password"
-              value={password}
-              name="password"
-              secureTextEntry={show}
-              onChangeText={inputPassword}
+              style={currentLoginStyle}
+              onFocus={() => setFocusLogin(true)}
+              onBlur={() => setFocusLogin(false)}
+              placeholder="Login"
+              value={login}
+              name="login"
+              onChangeText={inputLogin}
             />
-            <Text onPress={clickShowPassword} style={styles.showPassword}>
-              Show
-            </Text>
+            <TextInput
+              style={currentEmailStyle}
+              onFocus={() => setFocusEmail(true)}
+              onBlur={() => setFocusEmail(false)}
+              placeholder="You address email"
+              value={email}
+              name="email"
+              onChangeText={inputEmail}
+            />
+            <View>
+              <TextInput
+                style={{
+                  ...currentPasswordStyle,
+                  marginBottom:
+                    focusEmail || focusLogin || focusPassword ? 60 : 43,
+                }}
+                onFocus={() => setFocusPassword(true)}
+                onBlur={() => setFocusPassword(false)}
+                placeholder="Password"
+                value={password}
+                name="password"
+                secureTextEntry={show}
+                onChangeText={inputPassword}
+              />
+              <Text
+                onPress={clickShowPassword}
+                style={{
+                  ...styles.showPassword,
+                  bottom: focusEmail || focusLogin || focusPassword ? 74 : 58,
+                }}
+              >
+                Show
+              </Text>
+            </View>
           </View>
           <TouchableOpacity
             style={styles.buttonContainer}
@@ -169,8 +198,8 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     fontSize: 16,
   },
+  // focusForm: { marginBottom: 20 },
   inputPassword: {
-    marginBottom: 43,
     width: "100%",
     height: 50,
     borderRadius: 8,
@@ -181,7 +210,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   focusPassword: {
-    marginBottom: 43,
     width: "100%",
     height: 50,
     borderRadius: 8,
