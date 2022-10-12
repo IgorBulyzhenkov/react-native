@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   Keyboard,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { useEffect, useState } from "react";
 
-function RegistrationScreen() {
+function RegistrationScreen({ navigation }) {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,10 +21,9 @@ function RegistrationScreen() {
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
 
-
   useEffect(() => {
     const onChange = () => {
-      const width = Dimensions.get("window").width;
+      Dimensions.get("window").width;
     };
     const dimensionsHandler = Dimensions.addEventListener("change", onChange);
     return () => dimensionsHandler.remove();
@@ -65,6 +65,7 @@ function RegistrationScreen() {
       `My login ${login}, my email ${email}, my password ${password} `
     );
     console.log("====================================");
+    navigation.navigate("Home");
     reset();
   };
 
@@ -78,75 +79,90 @@ function RegistrationScreen() {
   const keyboardVerticalOffset = Platform.OS === "ios" ? "padding" : "height";
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatar}>
-        <View style={styles.border}>
-          <Text style={styles.plus}>+</Text>
-        </View>
-      </View>
-      <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Registration</Text>
-          <View style={currentFormStyle}>
-            <TextInput
-              style={currentLoginStyle}
-              onFocus={() => setFocusLogin(true)}
-              onBlur={() => setFocusLogin(false)}
-              placeholder="Login"
-              value={login}
-              name="login"
-              onChangeText={inputLogin}
-            />
-            <TextInput
-              style={currentEmailStyle}
-              onFocus={() => setFocusEmail(true)}
-              onBlur={() => setFocusEmail(false)}
-              placeholder="You address email"
-              value={email}
-              name="email"
-              onChangeText={inputEmail}
-            />
-            <View>
-              <TextInput
-                style={{
-                  ...currentPasswordStyle,
-                  marginBottom:
-                    focusEmail || focusLogin || focusPassword ? 60 : 43,
-                }}
-                onFocus={() => setFocusPassword(true)}
-                onBlur={() => setFocusPassword(false)}
-                placeholder="Password"
-                value={password}
-                name="password"
-                secureTextEntry={show}
-                onChangeText={inputPassword}
-              />
-              <Text
-                onPress={clickShowPassword}
-                style={{
-                  ...styles.showPassword,
-                  bottom: focusEmail || focusLogin || focusPassword ? 74 : 58,
-                }}
-              >
-                Show
-              </Text>
-            </View>
+    <ImageBackground
+      source={{ uri: "https://i.postimg.cc/d1MrrJNz/Photo-BG.png" }}
+      style={styles.image}
+    >
+      <View style={styles.container}>
+        <View style={styles.avatar}>
+          <View style={styles.border}>
+            <Text style={styles.plus}>+</Text>
           </View>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={handleClick}
-          >
-            <Text style={styles.textButton}>Registration</Text>
-          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-      <Text style={styles.textLink}>Already have an account? Sign in</Text>
-      <View style={styles.line}></View>
-    </View>
+        <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
+          <View style={styles.formContainer}>
+            <Text style={styles.title}>Registration</Text>
+            <View style={currentFormStyle}>
+              <TextInput
+                style={currentLoginStyle}
+                onFocus={() => setFocusLogin(true)}
+                onBlur={() => setFocusLogin(false)}
+                placeholder="Login"
+                value={login}
+                name="login"
+                onChangeText={inputLogin}
+              />
+              <TextInput
+                style={currentEmailStyle}
+                onFocus={() => setFocusEmail(true)}
+                onBlur={() => setFocusEmail(false)}
+                placeholder="You address email"
+                value={email}
+                name="email"
+                onChangeText={inputEmail}
+              />
+              <View>
+                <TextInput
+                  style={{
+                    ...currentPasswordStyle,
+                    marginBottom:
+                      focusEmail || focusLogin || focusPassword ? 60 : 43,
+                  }}
+                  onFocus={() => setFocusPassword(true)}
+                  onBlur={() => setFocusPassword(false)}
+                  placeholder="Password"
+                  value={password}
+                  name="password"
+                  secureTextEntry={show}
+                  onChangeText={inputPassword}
+                />
+                <Text
+                  onPress={clickShowPassword}
+                  style={{
+                    ...styles.showPassword,
+                    bottom: focusEmail || focusLogin || focusPassword ? 74 : 58,
+                  }}
+                >
+                  Show
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleClick}
+            >
+              <Text style={styles.textButton}>Registration</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+        <Text
+          style={styles.textLink}
+          onPress={() => navigation.navigate("LoginScreen")}
+        >
+          Already have an account? Sign in
+        </Text>
+        <View style={styles.line}></View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  image: {
+    justifyContent: "center",
+    flex: 1,
+    resizeMode: "contain",
+  },
   container: {
     backgroundColor: "#fff",
     paddingTop: 92,
