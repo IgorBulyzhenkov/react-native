@@ -1,4 +1,3 @@
-// import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
@@ -56,7 +55,6 @@ const Home = ({ navigation }) => {
           headerTitleStyle: {
             marginLeft: Platform.OS !== "ios" && "30%",
           },
-          // headerStyle: {  textAlign: "center" },
           tabBarStyle: { display: "none" },
           headerLeft: () => {
             return (
