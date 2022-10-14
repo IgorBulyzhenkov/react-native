@@ -4,6 +4,8 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import CreatePostsScreen from "../CreatePostsScreen/CreatePostsScreen";
 import PostScreen from "../PostsScreen/PostsScreen";
 import ProfileScreen from "../ProfileScreen/ProfileScreen";
+import MapScreen from "../MapScreen/MapScreen";
+import CommentsScreen from "../CommentsScreen/CommentsScreen";
 
 const Tabs = createBottomTabNavigator();
 
@@ -22,12 +24,7 @@ const Home = ({ navigation }) => {
         component={PostScreen}
         options={{
           title: "Публикации",
-          headerStyl: {
-            alignItems: "center",
-          },
-          headerTitleStyle: {
-            marginLeft: Platform.OS !== "ios" && "55%",
-          },
+          headerTitleAlign: "center",
           headerRight: () => (
             <Feather
               name="log-out"
@@ -52,9 +49,7 @@ const Home = ({ navigation }) => {
         component={CreatePostsScreen}
         options={{
           title: "Создать публикацию",
-          headerTitleStyle: {
-            marginLeft: Platform.OS !== "ios" && "30%",
-          },
+          headerTitleAlign: "center",
           tabBarStyle: { display: "none" },
           headerLeft: () => {
             return (
@@ -91,6 +86,56 @@ const Home = ({ navigation }) => {
               <Feather name="user" size={size} color="#FF6C00" />
             ) : (
               <Feather name="user" size={size} color={color} />
+            );
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="MapScreen"
+        component={MapScreen}
+        options={{
+          title: "Map Screen",
+          headerTitleAlign: "center",
+          tabBarStyle: { display: "none" },
+          tabBarButton: () => null,
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.arrow}
+                onPress={() => navigation.navigate("PostScreen")}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="rgba(33, 33, 33, 0.8)"
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="CommentsScreen"
+        component={CommentsScreen}
+        options={{
+          headerTitleAlign: "center",
+          title: "Комментарии",
+          tabBarStyle: { display: "none" },
+          tabBarButton: () => null,
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.arrow}
+                onPress={() => navigation.navigate("PostScreen")}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="rgba(33, 33, 33, 0.8)"
+                />
+              </TouchableOpacity>
             );
           },
         }}
