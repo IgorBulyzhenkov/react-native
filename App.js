@@ -8,10 +8,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { Provider } from "react-redux";
 import RegistrationScreen from "./component/Screen/RegistrationScreen/RegistrationScreen";
 import { useCallback } from "react";
 import LoginScreen from "./component/Screen/LoginScreen/LoginScreen";
 import Home from "./component/Screen/Home/Home";
+import store from "./component/redux/store";
 
 SplashScreen.preventAutoHideAsync();
 const MainStack = createStackNavigator();
@@ -43,7 +45,6 @@ const useRouting = (isAuth) => {
       component={Home}
       options={{
         headerShown: false,
-        
       }}
     />
   );
@@ -67,15 +68,17 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container} onLayout={onLayoutRootView}>
-          <MainStack.Navigator initialRouteName="LoginScreen">
-            {routing}
-          </MainStack.Navigator>
-        </View>
-      </TouchableWithoutFeedback>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container} onLayout={onLayoutRootView}>
+            <MainStack.Navigator initialRouteName="LoginScreen">
+              {routing}
+            </MainStack.Navigator>
+          </View>
+        </TouchableWithoutFeedback>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
