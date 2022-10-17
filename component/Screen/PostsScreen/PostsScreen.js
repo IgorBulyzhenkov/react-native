@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import { FontAwesome5, EvilIcons } from "@expo/vector-icons";
 import userImg from "../../img/myPhoto.jpg";
+import { useSelector } from "react-redux";
 
 function PostScreen({ route, navigation }) {
   const [post, setPost] = useState([]);
+  const { email, nickName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (!route.params) {
@@ -20,14 +22,13 @@ function PostScreen({ route, navigation }) {
     setPost((prevState) => [...prevState, route.params]);
   }, [route.params]);
 
-
   return (
     <View style={styles.container}>
       <View style={styles.containerUser}>
         <Image style={styles.imageUser} source={userImg} />
         <View style={styles.containerUserData}>
-          <Text style={styles.name}>Igor Bulyzhenkov</Text>
-          <Text style={styles.email}>bulyzhenkov.igor@gmail.com</Text>
+          <Text style={styles.name}>{nickName}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <FlatList
@@ -85,10 +86,9 @@ function PostScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // width: "100%",
     alignItems: "center",
     paddingTop: 32,
-    marginBottom:60,
+    marginBottom: 60,
   },
   containerUser: {
     width: 343,

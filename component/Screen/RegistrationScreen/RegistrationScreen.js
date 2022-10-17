@@ -5,21 +5,30 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
   Dimensions,
   ImageBackground,
 } from "react-native";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { authSinUpUser } from "../../redux/auth/authOperations";
+
+const initialState = {
+  login: "",
+  email: "",
+  password: "",
+};
 
 function RegistrationScreen({ navigation }) {
-  const [login, setLogin] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState(initialState);
   const [show, setShow] = useState(true);
   const [focusLogin, setFocusLogin] = useState(false);
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onChange = () => {
@@ -37,36 +46,14 @@ function RegistrationScreen({ navigation }) {
   const currentFormStyle =
     focusLogin || focusEmail || focusPassword ? styles.focusForm : null;
 
-  const inputLogin = (text) => {
-    setLogin(text.trim());
-  };
-
-  const inputEmail = (text) => {
-    setEmail(text.trim());
-  };
-
-  const inputPassword = (text) => {
-    setPassword(text.trim());
-  };
-
-  const reset = () => {
-    setLogin("");
-    setEmail("");
-    setPassword("");
-  };
-
   const handleClick = () => {
     Keyboard.dismiss();
-    if (!login && !email && !password) {
+    if (!state.login && !state.email && !state.password) {
       return;
     }
-    console.log("====================================");
-    console.log(
-      `My login ${login}, my email ${email}, my password ${password} `
-    );
-    console.log("====================================");
-    navigation.navigate("Home");
-    reset();
+    dispatch(authSinUpUser(state))
+    // navigation.navigate("Home");
+    setState(initialState);
   };
 
   const clickShowPassword = () => {
@@ -79,81 +66,105 @@ function RegistrationScreen({ navigation }) {
   const keyboardVerticalOffset = Platform.OS === "ios" ? "padding" : "height";
 
   return (
-    <ImageBackground
-      source={{ uri: "https://i.postimg.cc/d1MrrJNz/Photo-BG.png" }}
-      style={styles.image}
-    >
-      <View style={styles.container}>
-        <View style={styles.avatar}>
-          <View style={styles.border}>
-            <Text style={styles.plus}>+</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={{ uri: "https://i.postimg.cc/d1MrrJNz/Photo-BG.png" }}
+        style={styles.image}
+      >
+        <View style={styles.container}>
+          <View style={styles.avatar}>
+            <View style={styles.border}>
+              <Text style={styles.plus}>+</Text>
+            </View>
+          </View>
+          <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
+            <View style={styles.formContainer}>
+              <Text style={styles.title}>Registration</Text>
+              <View style={currentFormStyle}>
+                <TextInput
+                  style={currentLoginStyle}
+                  onFocus={() => setFocusLogin(true)}
+                  onBlur={() => setFocusLogin(false)}
+                  placeholder="Login"
+                  value={state.login}
+                  name="login"
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, login: value }))
+                  }
+                />
+                <TextInput
+                  style={currentEmailStyle}
+                  onFocus={() => setFocusEmail(true)}
+                  onBlur={() => setFocusEmail(false)}
+                  placeholder="You address email"
+                  value={state.email}
+                  name="email"
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, email: value }))
+                  }
+                />
+                <View>
+                  <TextInput
+                    style={{
+                      ...currentPasswordStyle,
+                      marginBottom:
+                        focusEmail || focusLogin || focusPassword ? 60 : 43,
+                    }}
+                    onFocus={() => setFocusPassword(true)}
+                    onBlur={() => setFocusPassword(false)}
+                    placeholder="Password"
+                    value={state.password}
+                    name="password"
+                    secureTextEntry={show}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
+                  />
+                  <Text
+                    onPress={clickShowPassword}
+                    style={{
+                      ...styles.showPassword,
+                      bottom:
+                        focusEmail || focusLogin || focusPassword ? 74 : 58,
+                    }}
+                  >
+                    Show
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={handleClick}
+              >
+                <Text style={styles.textButton}>Registration</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+          <View
+            style={{
+              alignItems: "center",
+              marginBottom:
+                focusEmail || focusPassword
+                  ? Platform.OS === "ios"
+                    ? 50
+                    : -130
+                  : null,
+            }}
+          >
+            <Text
+              style={styles.textLink}
+              onPress={() => navigation.navigate("LoginScreen")}
+            >
+              Already have an account? Sign in
+            </Text>
+            <View style={styles.line}></View>
           </View>
         </View>
-        <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
-          <View style={styles.formContainer}>
-            <Text style={styles.title}>Registration</Text>
-            <View style={currentFormStyle}>
-              <TextInput
-                style={currentLoginStyle}
-                onFocus={() => setFocusLogin(true)}
-                onBlur={() => setFocusLogin(false)}
-                placeholder="Login"
-                value={login}
-                name="login"
-                onChangeText={inputLogin}
-              />
-              <TextInput
-                style={currentEmailStyle}
-                onFocus={() => setFocusEmail(true)}
-                onBlur={() => setFocusEmail(false)}
-                placeholder="You address email"
-                value={email}
-                name="email"
-                onChangeText={inputEmail}
-              />
-              <View>
-                <TextInput
-                  style={{
-                    ...currentPasswordStyle,
-                    marginBottom:
-                      focusEmail || focusLogin || focusPassword ? 60 : 43,
-                  }}
-                  onFocus={() => setFocusPassword(true)}
-                  onBlur={() => setFocusPassword(false)}
-                  placeholder="Password"
-                  value={password}
-                  name="password"
-                  secureTextEntry={show}
-                  onChangeText={inputPassword}
-                />
-                <Text
-                  onPress={clickShowPassword}
-                  style={{
-                    ...styles.showPassword,
-                    bottom: focusEmail || focusLogin || focusPassword ? 74 : 58,
-                  }}
-                >
-                  Show
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.buttonContainer}
-              onPress={handleClick}
-            >
-              <Text style={styles.textButton}>Registration</Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-        <Text
-          style={styles.textLink}
-          onPress={() => navigation.navigate("LoginScreen")}
-        >
-          Already have an account? Sign in
-        </Text>
-        <View style={styles.line}></View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 

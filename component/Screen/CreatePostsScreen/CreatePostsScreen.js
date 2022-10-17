@@ -2,6 +2,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { Camera } from "expo-camera";
+import uuid from "react-native-uuid";
+import { storage } from "../../../config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import {
@@ -51,14 +54,36 @@ function CreatePostsScreen({ navigation }) {
     setNewPhoto(null);
   };
 
-  const handleClick = () => {
+  const uploadePhotoToServer = async () => {
+    try {
+      const postId = uuid.v4().split("-").join("");
+      const response = await fetch(newPhoto);
+      const file = await response.blob();
+      const storageRef = await ref(storage, `posts/${postId}`);
+      await uploadBytesResumable(storageRef, file);
+      const photo = await getDownloadURL(storageRef);
+      // let { status } = await Location.requestForegroundPermissionsAsync();
+      // if (status !== "granted") {
+      //   console.log("Permission to access location was denied");
+      //   return;
+      // }
+      // const location = await Location.getCurrentPositionAsync({});
+
+      return { photo };
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleClick = async () => {
     Keyboard.dismiss();
     if (!name && !location) {
       return;
     }
+    const { photo } = await uploadePhotoToServer();
     MediaLibrary.createAssetAsync(newPhoto);
     navigation.navigate("PostScreen", {
-      newPhoto,
+      newPhoto: photo,
       name: name.trim(),
       location: location.trim(),
       photoLocation,
@@ -70,7 +95,7 @@ function CreatePostsScreen({ navigation }) {
     setNewPhoto(null);
   };
 
-  const keyboardVerticalOffset = Platform.OS === "ios" ? "padding" : "android";
+  const keyboardVerticalOffset = Platform.OS === "ios" ? "padding" : "height";
 
   const takePhoto = async () => {
     try {
