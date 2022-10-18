@@ -13,6 +13,7 @@ const MapScreen = ({ route }) => {
     })();
   }, []);
 
+
   return (
     <View style={styles.container}>
       <MapView

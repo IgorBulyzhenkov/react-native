@@ -3,7 +3,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { Camera } from "expo-camera";
 import uuid from "react-native-uuid";
-import { storage } from "../../../config";
+import { storage, db } from "../../../config";
+import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
@@ -21,9 +22,10 @@ import {
   Image,
 } from "react-native";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 function CreatePostsScreen({ navigation }) {
-  const [name, setName] = useState("");
+  const [nameLocation, setNameLocation] = useState("");
   const [location, setLocation] = useState("");
   const [focus, setFocus] = useState(true);
   const [camera, setCamera] = useState("");
@@ -32,16 +34,23 @@ function CreatePostsScreen({ navigation }) {
 
   const [_, setHasCameraPermission] = useState(null);
 
+  const { userId, nickName } = useSelector((state) => state.auth);
+
   useEffect(() => {
     (async () => {
       await Camera.requestCameraPermissionsAsync();
       const cameraStatus = await Camera.getCameraPermissionsAsync();
       setHasCameraPermission(cameraStatus.status === "granted");
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
     })();
   }, []);
 
   const inputName = (text) => {
-    setName(text);
+    setNameLocation(text);
   };
 
   const inputLocation = (text) => {
@@ -49,12 +58,12 @@ function CreatePostsScreen({ navigation }) {
   };
 
   const reset = () => {
-    setName("");
+    setNameLocation("");
     setLocation("");
     setNewPhoto(null);
   };
 
-  const uploadePhotoToServer = async () => {
+  const uploadPhotoToServer = async () => {
     try {
       const postId = uuid.v4().split("-").join("");
       const response = await fetch(newPhoto);
@@ -62,32 +71,37 @@ function CreatePostsScreen({ navigation }) {
       const storageRef = await ref(storage, `posts/${postId}`);
       await uploadBytesResumable(storageRef, file);
       const photo = await getDownloadURL(storageRef);
-      // let { status } = await Location.requestForegroundPermissionsAsync();
-      // if (status !== "granted") {
-      //   console.log("Permission to access location was denied");
-      //   return;
-      // }
-      // const location = await Location.getCurrentPositionAsync({});
-
-      return { photo };
+      return photo;
     } catch (err) {
       console.log(err);
     }
   };
 
+  const uploadPostToServer = async () => {
+    try {
+      const photo = await uploadPhotoToServer();
+      await addDoc(collection(db, "posts"), {
+        photo,
+        nameLocation,
+        location,
+        photoLocation,
+        userId,
+        nickName,
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error.message);
+    }
+  };
+
   const handleClick = async () => {
     Keyboard.dismiss();
-    if (!name && !location) {
+    if (!nameLocation && !location) {
       return;
     }
-    const { photo } = await uploadePhotoToServer();
     MediaLibrary.createAssetAsync(newPhoto);
-    navigation.navigate("PostScreen", {
-      newPhoto: photo,
-      name: name.trim(),
-      location: location.trim(),
-      photoLocation,
-    });
+    await uploadPostToServer();
+
+    navigation.navigate("PostScreen");
     reset();
   };
 
@@ -173,7 +187,7 @@ function CreatePostsScreen({ navigation }) {
               <TextInput
                 style={styles.inputName}
                 placeholder="Название..."
-                value={name}
+                value={nameLocation}
                 name="name"
                 onChangeText={inputName}
                 onFocus={() => setFocus(false)}
@@ -197,7 +211,7 @@ function CreatePostsScreen({ navigation }) {
                 />
               </View>
 
-              {newPhoto && location && name ? (
+              {newPhoto && location && nameLocation ? (
                 <TouchableOpacity
                   style={{
                     ...styles.buttonContainer,
