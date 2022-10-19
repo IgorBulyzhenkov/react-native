@@ -46,7 +46,6 @@ function LoginScreen({ navigation }) {
       return;
     }
     dispatch(authSinInUser(state));
-    // navigation.navigate("Home");
     setState(initialState);
   };
 

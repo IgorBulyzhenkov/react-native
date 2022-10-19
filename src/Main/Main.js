@@ -10,10 +10,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { authStateChangeUser } from "../redux/auth/authOperations";
-import RegistrationScreen from "../Screen/RegistrationScreen/RegistrationScreen";
-import LoginScreen from "../Screen/LoginScreen/LoginScreen";
-import Home from "../Screen/Home/Home";
+import { authStateChangeUser } from "../../src/redux/auth/authOperations";
+import RegistrationScreen from "../../src/Screen/RegistrationScreen/RegistrationScreen";
+import LoginScreen from "../../src/Screen/LoginScreen/LoginScreen";
+import Home from "../../src/Screen/Home/Home";
 
 const MainStack = createStackNavigator();
 SplashScreen.preventAutoHideAsync();

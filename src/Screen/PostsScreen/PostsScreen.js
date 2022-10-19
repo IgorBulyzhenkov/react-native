@@ -36,7 +36,7 @@ function PostScreen({ navigation }) {
     );
     return () => unsubscribe();
   }, []);
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.containerUser}>
@@ -72,7 +72,9 @@ function PostScreen({ navigation }) {
                   }}
                 >
                   <FontAwesome5 name="comments" size={24} color="#BDBDBD" />
-                  <Text style={styles.commentNumber}>0</Text>
+                  <Text style={styles.commentNumber}>
+                    {item.comments > 0 ? item.comments : 0}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.location}
@@ -94,7 +96,7 @@ function PostScreen({ navigation }) {
             </View>
           );
         }}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );

@@ -52,7 +52,6 @@ function RegistrationScreen({ navigation }) {
       return;
     }
     dispatch(authSinUpUser(state))
-    // navigation.navigate("Home");
     setState(initialState);
   };
 

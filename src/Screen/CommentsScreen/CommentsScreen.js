@@ -70,7 +70,7 @@ function CommentsScreen({ route }) {
       return;
     }
     try {
-      const date = new Date().toLocaleString();
+      const date = new Date().toString();
       await addDoc(collection(db, "posts", `${post.photoId}`, "comments"), {
         comment: textInput,
         nickName,
@@ -87,7 +87,6 @@ function CommentsScreen({ route }) {
   };
 
   const keyboardVerticalOffset = Platform.OS === "ios" && "padding";
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior={keyboardVerticalOffset}>
@@ -105,20 +104,44 @@ function CommentsScreen({ route }) {
                 marginBottom: 80,
               }}
               renderItem={({ item }) => {
-                const date = item.date.split(",");
-                const h = date[1].split(":");
-                const hoursAndMinute = h[0] + ":" + h[1];
+                console.log(item.userId);
+                const date = new Date(item?.date);
+                const month = date.getMonth();
+                const day = date.getDate();
+                const years = date.getFullYear();
+                const h = date.getHours();
+                const m = date.getMinutes();
+                const newMonth = month < 10 ? "0" + month.toString() : month;
+                const fullYears = day + "." + newMonth + "." + years;
+                const hoursAndMinute = h + ":" + m;
+                const border =
+                  item.userId === userId
+                    ? { borderTopRightRadius: 0 }
+                    : { borderTopLeftRadius: 0 };
+                const margin =
+                  item.userId === userId
+                    ? { marginLeft: 16 }
+                    : { marginRight: 16 };
                 return (
-                  <View style={styles.containerUser}>
-                    <View style={styles.containerComment}>
-                      <Text style={styles.text}>{item.comment}</Text>
+                  <View
+                    style={{
+                      ...styles.containerUser,
+                      flexDirection:
+                        item?.userId === userId ? "row" : "row-reverse",
+                    }}
+                  >
+                    <View style={{ ...styles.containerComment, ...border }}>
+                      <Text style={styles.text}>{item?.comment}</Text>
                       <View style={styles.dateContainer}>
-                        <Text style={styles.date}>{date[0]}</Text>
+                        <Text style={styles.date}>{fullYears}</Text>
                         <View style={styles.line}></View>
                         <Text style={styles.hours}>{hoursAndMinute}</Text>
                       </View>
                     </View>
-                    <Image source={userImg} style={styles.imageUser} />
+                    <Image
+                      source={userImg}
+                      style={{ ...styles.imageUser, ...margin }}
+                    />
                   </View>
                 );
               }}
@@ -175,14 +198,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   containerUser: {
-    flexDirection: "row",
     width: "100%",
   },
   imageUser: {
     width: 28,
     height: 28,
     borderRadius: 50,
-    marginLeft: 16,
   },
   footer: {
     width: 343,
@@ -214,7 +235,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 10,
     borderRadius: 10,
-    borderTopRightRadius: 0,
   },
   dateContainer: {
     justifyContent: "flex-end",
