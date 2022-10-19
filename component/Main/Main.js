@@ -53,7 +53,6 @@ const Main = () => {
   const state = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const routing = useRouting(state.stateChange);
-  console.log(state);
 
   useEffect(() => {
     dispatch(authStateChangeUser());

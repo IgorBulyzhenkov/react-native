@@ -16,10 +16,8 @@ import { useSelector } from "react-redux";
 function PostScreen({ navigation }) {
   const [post, setPost] = useState([]);
   const { email, nickName } = useSelector((state) => state.auth);
-
   const getAllDocs = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
-    console.log(querySnapshot);
     const newPosts = [];
     querySnapshot.forEach((doc) => {
       newPosts.push({ ...doc.data(), id: doc.id });
@@ -68,7 +66,8 @@ function PostScreen({ navigation }) {
                   style={styles.comment}
                   onPress={() => {
                     navigation.navigate("CommentsScreen", {
-                      img: item.newPhoto,
+                      img: item.photo,
+                      photoId: item.id,
                     });
                   }}
                 >
